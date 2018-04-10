@@ -3,20 +3,24 @@ from urllib.error import HTTPError
 from bs4 import BeautifulSoup
 from pprint import pprint
 
-def getTitle(url) :
+
+def writeIn(text) :
+    f = open('parsed.txt', 'w', encoding='utf-8')
+    f.write(str(text))
+
+def getbsObj(url) :
     try :
         html = urlopen(url)
     except HTTPError as e :
         return None
     try :
         bsObj = BeautifulSoup(html.read())
-        title = bsObj.body.h1
     except AttributeError as e :
         return None
-    return title
+    return bsObj
 
-title = getTitle("http://pythonscraping.com/pages/page1.html")
-if title == None :
+bsObj = getbsObj("https://twitter.com/gagjidol")
+if bsObj == None :
     print("Title could not be found")
 else :
-    print(title)
+    writeIn(bsObj)
