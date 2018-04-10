@@ -1,26 +1,11 @@
 from urllib.request import urlopen
-from urllib.error import HTTPError
 from bs4 import BeautifulSoup
+import re
 from pprint import pprint
 
+html = urlopen("http://www.pythonscraping.com/pages/page3.html")
+bsObj = BeautifulSoup(html)
 
-def writeIn(text) :
-    f = open('parsed.txt', 'w', encoding='utf-8')
-    f.write(str(text))
-
-def getbsObj(url) :
-    try :
-        html = urlopen(url)
-    except HTTPError as e :
-        return None
-    try :
-        bsObj = BeautifulSoup(html.read())
-    except AttributeError as e :
-        return None
-    return bsObj
-
-bsObj = getbsObj("https://twitter.com/gagjidol")
-if bsObj == None :
-    print("Title could not be found")
-else :
-    writeIn(bsObj)
+images = bsObj.findAll("img", {"src" : re.compile("\.\.\/img\/gifts/img.*\.jpg")})
+for image in images :
+    print(image["src"])
