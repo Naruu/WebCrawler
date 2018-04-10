@@ -7,6 +7,7 @@ from pprint import pprint
 def writeIn(text) :
     f = open('parsed.txt', 'w', encoding='utf-8')
     f.write(str(text))
+    f.close()
 
 def getbsObj(url) :
     try :
