@@ -21,4 +21,5 @@ sfo_trends = twitter.trends.place(_id = 2487956)
 pprint(json.dumps(sfo_trends, indent=4)))
 
 
-
+twitter.followers.ids(screen_name="cocoweixu")
+twitter.statuses.user_timeline(screen_name="owlcity")
