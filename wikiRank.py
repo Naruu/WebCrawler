@@ -23,6 +23,15 @@ def getHistoryIPs(pageUrl) :
         addressList.add(ipAddress.get_text())
     return addressList
 
+def getConuntry(ipAddress) :
+    try :
+        response = urlopen("http ://freegeoip/json/" +ipAddress).read().decode('utf-8')
+
+    except HTTPError :
+        return none
+    responseJson = json.loads(response)
+    return responseJson.get("country_code")
+
 links = getLinks("/wiki/Python_(programming_language)")
 
 while(len(links) > 0) :
