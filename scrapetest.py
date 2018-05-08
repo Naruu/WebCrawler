@@ -1,12 +1,15 @@
+from zipfile import ZipFile
 from urllib.request import urlopen
-from io import StringIO
-import csv
+from io import BytesIO
+from bs4 import BeautifulSoup
 
-data = urlopen("http://pythonscraping.com/files/MontyPythonAlbums.csv").read().decode('ascii', 'ignore')
-dataFile = StringIO(data)
-csvReader = csv.reader(dataFile)
-dicReader = csv.DictReader(dataFile)
+wordFile = urlopen("http://pythonscraping.com/pages/AWordDocument.docx").read()
+wordFile = BytesIO(wordFile)
+document = ZipFile(wordFile)
+xml_content = document.read('word/document.xml')
 
-for row in dicReader:
-    print(row)
 
+wordObj = BeautifulSoup(xml_content.decode('utf-8'))
+textStrings = wordObj.findAll("w:t")
+for textElem in textStrings :
+    print(textElem.text)
