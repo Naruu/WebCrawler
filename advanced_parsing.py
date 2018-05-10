@@ -1,11 +1,17 @@
 from urllib.request import urlopen
 from bs4 import BeautifulSoup
+import re
 
 def ngrams(input, n) :
-    input = input.split(' ')
+    content = re.sub('\n+', " ", input)
+    content = re.sub(' +', " ", content)
+    content = bytes(content, "UTF-8")
+    content = content.decode("ascii", "ignore")
+    print(content)
+    content = content.split(' ')
     output =[]
-    for i in range(len(input) -n+1) :
-        output.append(input[i:i+n])
+    for i in range(len(content) -n+1) :
+        output.append(content[i:i+n])
     return output
 
 html = urlopen("http://en.wikipedia.org/wiki/Python_programming_language")
