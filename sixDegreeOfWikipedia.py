@@ -8,37 +8,44 @@ conn = pymysql.connect(host= '127.0.0.1', user = 'root', password = '', port=330
 cur = conn.cursor()
 cur.execute("USE wikipedia")
 
-def insertPageIfNotExists(url) :
-    cur.execute("SELECT * FROM pages WHERE url = %s", (url))
-    if cur.rowcount == 0 :
-        cur.execute("INSERT INTO pages (url) VALUES (%s)", (url))
-        conn.commit()
-        return cur.lastrowid
-    else :
-        return cur.fetchone()[0]
+class SolutionFound(RuntimeError) :
+    def __init__(self, message):
+        self.message = message
 
-def insertLink(fromPageId, toPageId) :
-    cur.execute("SELECT * FROM links WHERE fromPageId = %s AND toPageId = %s", (int(fromPageId), int(toPageId)))
-    if cur.rowcount == 0 :
-        cur.execute("INSERT INTO links (fromPageId, toPageId) VALUES (%s, %s)", (int(fromPageId), int(toPageId)))
-        conn.commit()
+def getLinks(fromPageId):
+    cur.execute("SELECT toPageId FROM links WHERE fromPageID = %s", (fromPageId))
+    if cur.rowcount ==0 :
+        return None
+    else:
+        return [x[0] for x in cur.fetchall()]
 
-pages = set()
+def constructDict(currentPageId):
+    links = getLinks(currentPageId)
+    if links:
+        return dict(zip(links, [{}]*len(links)))
+    return {}
 
-def getLinks(pageUrl, recursionLevel) :
-    global pages
-    if recursionLevel > 4 :
-        return;
-    pageId = insertPageIfNotExists(pageUrl)
-    html = urlopen("http://en.wikipedia.org" + pageUrl)
-    bsObj= BeautifulSoup(html)
-    for link in bsObj.findAll("a", href=re.compile("^(/wiki/)((?!:).)*$")):
-        insertLink(pageId, insertPageIfNotExists(link.attrs['href']))
-        if link.attrs['href'] not in pages :
-            newPage = link.attrs['href']
-            pages.add(newPage)
-            getLinks(newPage, recursionLevel+1)
+def searchDepth(targetPageId, currentPageId, linkTree, depth):
+    if depth ==0:
+        return linkTree
+    if not linkTree :
+        linkTree= constructDict(currentPageId)
+        if not linkTree :
+            return {}
+    if targetPageId in linkTree.keys() :
+        print("TARGET" +str(targetPageId)+"FOUND!")
+        raise SolutionFound("PAGE :" + str(currentPageId))
 
-getLinks("/wiki/Kevin_Bacon", 0)
-cur.close()
-conn.close()
+    for branchKey, branchValue in linkTree.items() :
+        try :
+            linkTree[branchKey] = searchDepth(targetPageId, branchKey, branchValue, depth-1)
+        except SolutionFound as e:
+            print(e.message)
+            raise SolutionFound("PAGE:" + str(currentPageId))
+        return linkTree
+
+try :
+    searchDepth(134951, 1, {}, 4)
+    print("No solution found")
+except SolutionFound as e :
+    print(e.meesage)
