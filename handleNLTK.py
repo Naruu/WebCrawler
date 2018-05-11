@@ -1,5 +1,7 @@
 from nltk.book import text6
 from nltk import FreqDist
+from nltk import bigrams
 
-fdist = FreqDist(text6)
-fdist.most_common(10)
+bigrams = bigrams(text6)
+bigramDist=FreqDist(bigrams)
+bigramDist[("sir", "Robin")]
