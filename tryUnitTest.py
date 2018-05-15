@@ -13,6 +13,12 @@ class TestWikipedia(unittest.TestCase) :
         global bsObj
         pageTitle = bsObj.find("h1").get_text()
         self.assertEqual("Monty Python", pageTitle)
-        
+
+    def test_contentExists(self):
+        global bsObj
+        content = bsObj.find("div", {"id" : 'mw-content-text'})
+        self.assertIsNotNone(content)
+
+
 if __name__ == '__main__' :
     unittest.main()
