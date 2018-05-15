@@ -1,15 +1,18 @@
+from urllib.request import urlopen
+from bs4 import BeautifulSoup
 import unittest
 
-class TestAddition(unittest.TestCase) :
-    def seUp(self):
-        print("Setting up the test")
+class TestWikipedia(unittest.TestCase) :
+    bsObj = None
+    def setUpClass():
+        global bsObj
+        url = 'http://en.wikipedia.org/wiki/Monty_Python'
+        bsObj = BeautifulSoup(urlopen(url))
 
-    def tearDown(self):
-        print("Tearing down the test")
-
-    def test_twoPlusTwo(self):
-        total = 2+2
-        self.assertEqual(4, total)
-
+    def test_titleText(self):
+        global bsObj
+        pageTitle = bsObj.find("h1").get_text()
+        self.assertEqual("Monty Python", pageTitle)
+        
 if __name__ == '__main__' :
     unittest.main()
