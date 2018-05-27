@@ -13,9 +13,8 @@ for tr in table :
     else :
         temp.append(float(tr.contents[3].get_text()))
 
-plt.style.use('fivethirtyeight')
 plt.plot(day, temp[:31])
-plt.title('2018.01. Average Temperature of Seoul')
+plt.title('2018 January Average Temperature of Seoul')
+plt.xlabel('Date')
+plt.ylabel('Average Temperature(°C)')
 plt.show()
-
-#x, y axis 단위 적기!
